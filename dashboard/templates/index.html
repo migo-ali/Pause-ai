@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Project Dashboard</title>
+</head>
+<body>
+  <h1>Projects</h1>
+  <form method="post">
+    <input type="text" name="name" placeholder="Project name" required>
+    <input type="text" name="prompt" placeholder="Prompt" required>
+    <button type="submit">Add project</button>
+  </form>
+  <ul>
+    {% for project in projects %}
+    <li>
+      <strong>{{ project['name'] }}</strong>
+      <form action="{{ url_for('update', project_id=project['id']) }}" method="post" style="display:inline;">
+        <button type="submit">Update</button>
+      </form>
+      <p>{{ project['last_response'] }}</p>
+    </li>
+    {% endfor %}
+  </ul>
+</body>
+</html>
