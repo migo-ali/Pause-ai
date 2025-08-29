@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <title>Migo Signals on Vercel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+  <style>
+    body{margin:0;background:#0b0d10;color:#eaecef;font-family:'Cairo',system-ui}
+    .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin:12px}
+    .badge{padding:10px 12px;border-radius:10px;background:#11151b;border:1px solid #2b2f36}
+    .badge.green{background:#163a23;color:#4caf50;border-color:#2e7d32}
+    .badge.red{background:#3a1a1a;color:#f44336;border-color:#c62828}
+    .badge.gray{background:#333;color:#bbb;border-color:#39424c}
+    .muter{display:flex;align-items:center;gap:6px;padding:8px 10px;border:1px solid #2b2f36;border-radius:10px;background:#12151a}
+  </style>
+</head>
+<body>
+  <div class="row">
+    <label>السوق</label><select id="market"><option>crypto</option><option>stock</option></select>
+    <label>الرمز</label><input id="symbol" value="BTCUSDT"/>
+    <label>الفاصل</label><select id="interval"><option>1h</option><option>1d</option></select>
+    <button id="allBtn">جميع الإشارات</button>
+    <label class="muter"><input id="mute" type="checkbox"> كتم الصوت</label>
+    <div id="allBadge" class="badge gray">Signals: --</div>
+  </div>
+  <div id="chart" style="height:480px"></div>
+  <script>
+    const chart = LightweightCharts.createChart(document.getElementById('chart'),
+      {layout:{background:{color:'#12151a'},textColor:'#d5dde5'}});
+    const series = chart.addCandlestickSeries();
+
+    let audioCtx;
+    function playTone(freq=880, duration=0.25){
+      if(document.getElementById('mute').checked) return;
+      try{
+        audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
+        const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+        o.type='sine'; o.frequency.value=freq; g.gain.value=0.08;
+        o.connect(g); g.connect(audioCtx.destination); o.start();
+        setTimeout(()=>o.stop(), duration*1000);
+      }catch(e){}
+    }
+    function alertBUY(){ playTone(1100,0.25); setTimeout(()=>playTone(1400,0.25),120); }
+    function alertSELL(){ playTone(500,0.25); setTimeout(()=>playTone(350,0.25),120); }
+
+    let lastSignalKey=null;
+    async function loadAll(){
+      const m=market.value, s=symbol.value.trim().toUpperCase(), i=interval.value;
+      const res=await fetch(`/api/all_signals?symbol=${encodeURIComponent(s)}&market=${m}&interval=${i}`);
+      const j=await res.json();
+      const txt=`RSI:${j.RSI} | SMA:${j.SMA} | MACD:${j.MACD} | BB:${j.BB}`;
+      const badge=document.getElementById('allBadge');
+      badge.textContent=txt; badge.className="badge gray";
+      const key=`${j.SMA}|${j.MACD}|${j.BB}`;
+      if(txt.includes("BUY")) badge.className="badge green";
+      if(txt.includes("SELL")) badge.className="badge red";
+      if(key!==lastSignalKey){
+        if(key.includes("BUY")) alertBUY();
+        else if(key.includes("SELL")) alertSELL();
+        lastSignalKey=key;
+      }
+    }
+    allBtn.onclick=loadAll;
+    setInterval(loadAll, 60000);
+    loadAll();
+  </script>
+</body>
+</html>
