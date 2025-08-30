@@ -63,6 +63,11 @@ def update(project_id):
     return redirect(url_for('index'))
 
 
+@app.route('/pause-empire')
+def pause_empire_dashboard():
+    return render_template('pause_empire_dashboard.html')
+
+
 if __name__ == '__main__':
     init_db()
     app.run(debug=True)
