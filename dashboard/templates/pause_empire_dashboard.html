@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>Pause Empire Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      margin: 0;
+      background: #0b0d10;
+      color: #FFD700;
+      font-family: 'Cairo', sans-serif;
+    }
+    h1 {
+      text-align: center;
+      padding: 20px;
+      font-size: 28px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      padding: 20px;
+    }
+    canvas {
+      background: #11151b;
+      border-radius: 12px;
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>⚡ Pause Empire – Trading Dashboard ⚡</h1>
+  <div class="grid">
+    <canvas id="lineChart"></canvas>
+    <canvas id="barChart"></canvas>
+    <canvas id="doughnutChart"></canvas>
+    <canvas id="scatterChart"></canvas>
+  </div>
+
+  <script>
+    // بيانات Mock
+    const MOCK = {
+      pnlMonthly: {
+        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug"],
+        data: [0, 5, 9, 15, 21, 30, 42, 50],
+      },
+      winRateBySymbol: {
+        labels: ["AAPL", "TSLA", "MSFT", "GOOG", "AMZN"],
+        data: [65, 58, 72, 80, 69],
+      },
+      scoreVsVolatility: [
+        { x: 0.5, y: 40 },
+        { x: 0.8, y: 55 },
+        { x: 1.2, y: 70 },
+        { x: 1.5, y: 90 },
+      ],
+    };
+
+    // Line Chart
+    new Chart(document.getElementById("lineChart"), {
+      type: "line",
+      data: {
+        labels: MOCK.pnlMonthly.labels,
+        datasets: [{
+          label: "PnL Monthly",
+          data: MOCK.pnlMonthly.data,
+          borderColor: "#FFD700",
+          backgroundColor: "rgba(255,215,0,0.2)",
+          tension: 0.4,
+          fill: true,
+        }],
+      },
+      options: {
+        plugins: { legend: { labels: { color: "#FFD700" } } },
+        scales: { x: { ticks:{color:"#FFD700"} }, y:{ ticks:{color:"#FFD700"} } }
+      }
+    });
+
+    // Bar Chart
+    new Chart(document.getElementById("barChart"), {
+      type: "bar",
+      data: {
+        labels: MOCK.winRateBySymbol.labels,
+        datasets: [{
+          label: "Win Rate %",
+          data: MOCK.winRateBySymbol.data,
+          backgroundColor: "#4caf50",
+        }],
+      },
+      options: {
+        plugins: { legend: { labels: { color: "#FFD700" } } },
+        scales: { x: { ticks:{color:"#FFD700"} }, y:{ ticks:{color:"#FFD700"} } }
+      }
+    });
+
+    // Doughnut Chart
+    new Chart(document.getElementById("doughnutChart"), {
+      type: "doughnut",
+      data: {
+        labels: MOCK.winRateBySymbol.labels,
+        datasets: [{
+          data: MOCK.winRateBySymbol.data,
+          backgroundColor: ["#e91e63", "#3f51b5", "#ff9800", "#00bcd4", "#8bc34a"],
+        }],
+      },
+      options: { plugins: { legend: { labels: { color: "#FFD700" } } } }
+    });
+
+    // Scatter Chart
+    new Chart(document.getElementById("scatterChart"), {
+      type: "scatter",
+      data: {
+        datasets: [{
+          label: "Score vs Volatility",
+          data: MOCK.scoreVsVolatility,
+          backgroundColor: "#ff5722",
+        }],
+      },
+      options: {
+        plugins: { legend: { labels: { color: "#FFD700" } } },
+        scales: {
+          x: { type: "linear", position: "bottom", ticks:{color:"#FFD700"} },
+          y: { ticks:{color:"#FFD700"} }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
