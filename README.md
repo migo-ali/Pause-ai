@@ -54,4 +54,10 @@ python market_data_demo.py TSLA
 
 If no ticker is provided, the script defaults to `AAPL`.
 
+To shuffle the previewed rows or adjust how many you see, add optional flags such as:
+
+```bash
+python market_data_demo.py TSLA --rows 3 --shuffle
+```
+
 
