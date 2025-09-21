@@ -39,4 +39,25 @@ interact with the OpenAI API.
 Then open [http://localhost:5000](http://localhost:5000) to manage projects and
 trigger updates via the OpenAI API.
 
+## Market Data Demo
+
+The repository also contains `market_data_demo.py`, a small script that fetches
+intraday market data for a ticker from multiple public sources. It combines
+hourly data from Yahoo Finance with the Alpha Vantage demo endpoint and prints a
+link to Polygon's documentation for further exploration.
+
+Run the demo with:
+
+```bash
+python market_data_demo.py TSLA
+```
+
+If no ticker is provided, the script defaults to `AAPL`.
+
+To shuffle the previewed rows or adjust how many you see, add optional flags such as:
+
+```bash
+python market_data_demo.py TSLA --rows 3 --shuffle
+```
+
 
